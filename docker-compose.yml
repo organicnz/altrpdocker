@@ -15,12 +15,14 @@ services:
     restart: always
   litespeed:
     image: litespeedtech/openlitespeed:${OLS_VERSION}-${PHP_VERSION}
+    build: ./custom
     env_file:
       - .env
     volumes:
         - ./lsws/conf:/usr/local/lsws/conf
         - ./lsws/admin-conf:/usr/local/lsws/admin/conf
         - ./bin/container:/usr/local/bin
+        - ./bin/composer:/usr/bin/composer
         - ./sites:/var/www/vhosts/
         - ./acme:/root/.acme.sh/
         - ./logs:/usr/local/lsws/logs/
@@ -29,14 +31,8 @@ services:
       - 443:443
       - 443:443/udp
       - 7080:7080
+      - 3000:3000
     restart: always
     environment:
       TZ: ${TimeZone}
-  phpmyadmin:
-    image: bitnami/phpmyadmin:5.0.2-debian-10-r72
-    ports:
-      - 8080:80
-      - 8443:443
-    environment:
-        DATABASE_HOST: mysql
-    restart: always    
+      HOST: host.docker.internal
